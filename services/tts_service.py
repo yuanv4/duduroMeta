@@ -23,6 +23,7 @@ class ByteDanceTTS(TTSService):
         self.access_token = "Iwm8utZ5YcKIWsXWjHBXvTY-MFO8MLiU"
         self.cluster = "volcano_tts"
         self.voice_type = "BV700_V2_streaming"
+        self.language = "zh"
         self.api_url = f"https://openspeech.bytedance.com/api/v1/tts"
         self.max_text_length = 300  # Adjust this based on the API's limit
 
@@ -46,6 +47,7 @@ class ByteDanceTTS(TTSService):
                     },
                     "audio": {
                         "voice_type": self.voice_type,
+                        "language": self.language,
                         "encoding": "mp3",
                         "speed_ratio": 1.0,
                         "volume_ratio": 1.0,
