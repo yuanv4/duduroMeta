@@ -22,21 +22,17 @@ def main():
     try:
         app = ChatbotApp()
     except ValueError as e:
-        print(f"Configuration error: {str(e)}")
+        print(f"ChatbotApp Init Error: {str(e)}")
         return
-    
-    print("Chatbot (type 'exit' to quit)")
     while True:
         try:
             user_input = input("You: ")
             if user_input.lower() == "exit":
                 break
-                
             # Get chatbot response and speak it
             response = app.chat(user_input)
             print(f"Bot: {response}")
             app.speak(response)
-            
         except KeyboardInterrupt:
             print("\nGoodbye!")
             break

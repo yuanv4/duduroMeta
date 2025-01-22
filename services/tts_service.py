@@ -23,8 +23,7 @@ class ByteDanceTTS(TTSService):
         self.access_token = "Iwm8utZ5YcKIWsXWjHBXvTY-MFO8MLiU"
         self.cluster = "volcano_tts"
         self.voice_type = "BV700_V2_streaming"
-        self.host = "openspeech.bytedance.com"
-        self.api_url = f"https://{self.host}/api/v1/tts"
+        self.api_url = f"https://openspeech.bytedance.com/api/v1/tts"
         self.max_text_length = 300  # Adjust this based on the API's limit
 
     def speak(self, text):
