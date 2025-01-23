@@ -2,13 +2,11 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM fully loaded and parsed');
     const chatHistory = document.getElementById('chat-history');
     const inputText = document.getElementById('input-text');
-    const sendBtn = document.getElementById('send-btn');
     const audioPlayer = document.getElementById('audio-player');
     
     console.log('Elements:', {
         chatHistory,
         inputText,
-        sendBtn,
         audioPlayer
     });
 
@@ -40,14 +38,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // 绑定发送事件
-    console.log('Binding click event to send button');
-    console.log('Send button element:', sendBtn);
-    sendBtn.addEventListener('click', function(e) {
-        console.log('Send button clicked');
-        sendMessage();
-    });
-    
     // 绑定回车键发送
     inputText.addEventListener('keydown', function(e) {
         if (e.key === 'Enter' && !e.shiftKey) {
@@ -72,11 +62,26 @@ document.addEventListener('DOMContentLoaded', function() {
         timeDiv.className = 'message-time';
         timeDiv.textContent = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
         
+        // Add play button for bot messages
+        if (sender === 'bot') {
+            const playBtn = document.createElement('button');
+            playBtn.className = 'play-audio-btn';
+            playBtn.innerHTML = ''; // Play symbol
+            playBtn.title = '';
+            refreshPlayBtn(playBtn, true);
+
+            timeDiv.appendChild(playBtn);
+        }
+        
         bubbleDiv.appendChild(textDiv);
         bubbleDiv.appendChild(timeDiv);
         messageDiv.appendChild(bubbleDiv);
         chatHistory.appendChild(messageDiv);
-        chatHistory.scrollTop = chatHistory.scrollHeight;
+        // Smooth scroll to bottom with behavior: 'smooth'
+        chatHistory.scrollTo({
+            top: chatHistory.scrollHeight,
+            behavior: 'smooth'
+        });
     }
 
     // 播放音频
@@ -84,5 +89,24 @@ document.addEventListener('DOMContentLoaded', function() {
         audioPlayer.src = url;
         audioPlayer.style.display = 'block';
         audioPlayer.play();
+    }
+
+    // 刷新 playBtn 按钮样式
+    function refreshPlayBtn(currentBtn, isPlaying){
+        if (isPlaying) {
+            currentBtn.innerHTML = '&#10074;'; // Pause symbol
+            currentBtn.title = '暂停播放';
+            currentBtn.addEventListener('click', function() {
+                audioPlayer.pause();
+                refreshPlayBtn(currentBtn, false)
+            });
+        } else {
+            currentBtn.innerHTML = '&#9658;'; // Play symbol
+            currentBtn.title = '播放语音';
+            currentBtn.addEventListener('click', function() {
+                audioPlayer.play();
+                refreshPlayBtn(currentBtn, true)
+            });
+        }
     }
 });
