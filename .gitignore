@@ -1,18 +1,31 @@
-# Python
+# Environment variables
+.env
+.env.local
+
+# Python compiled files
 __pycache__/
 *.py[cod]
 *$py.class
 
-# Environment
-.env
-.env.*
+# Audio cache
+*.mp3
+*.wav
 
-# IDE
+# IDE specific files
 .vscode/
 .idea/
 
-# Build
-build/
-dist/
-*.egg-info/
-*.mp3
+# Log files
+*.log
+logs/
+
+# Virtual environment
+venv/
+env/
+.venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Loguru logs
+logs/app.log
