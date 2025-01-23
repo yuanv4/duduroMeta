@@ -4,15 +4,6 @@ import os
 
 app = create_app()
 
-# Configure static file route for audio files
-app.config['AUDIO_FOLDER'] = os.path.join(os.path.dirname(__file__), 'audio')
-os.makedirs(app.config['AUDIO_FOLDER'], exist_ok=True)
-app.add_url_rule(
-    '/audio/<filename>',
-    endpoint='audio',
-    view_func=app.send_static_file
-)
-
 if __name__ == "__main__":
     try:
         # Create logs directory if it doesn't exist

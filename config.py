@@ -1,3 +1,8 @@
+import os
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
 from pydantic_settings import BaseSettings
 from pydantic import Field, HttpUrl, ValidationError, field_validator
 from pathlib import Path
@@ -84,13 +89,13 @@ class Settings(BaseSettings):
         default=30,
         env="TTS_MAX_TEXT_LENGTH",
         gt=0,
-        le=500,
+        le=30,
         description="Maximum text length for TTS input"
     )
 
     # Audio Configuration
     audio_folder: str = Field(
-        default="audio",
+        default=os.path.join(BASE_DIR, "app", "static", "audio"),
         env="AUDIO_FOLDER",
         description="Folder to store generated audio files"
     )

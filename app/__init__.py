@@ -1,15 +1,21 @@
 from flask import Flask
+from flask_cors import CORS
 from loguru import logger
 from config import config
 import os
 
 def create_app():
-    app = Flask(__name__, static_folder='audio')
+    app = Flask(__name__, 
+        static_folder='static',
+        template_folder='templates',
+        static_url_path='/static'
+    )
     
     # Configure application
     app.config["SECRET_KEY"] = str(config.flask_secret_key)
     app.config["DEBUG"] = config.flask_debug
-    
+    app.config["AUDIO_FOLDER"] = os.path.abspath(config.audio_folder)
+
     # Configure logging
     logger.add(
         "logs/app.log",
@@ -20,12 +26,7 @@ def create_app():
     
     # Register blueprints
     from .routes import bp as api_bp
-    app.register_blueprint(api_bp, url_prefix="/api")
-    
-    # Add static route for audio files
-    @app.route('/audio/<filename>')
-    def serve_audio(filename):
-        return app.send_static_file(os.path.join('audio', filename))
+    app.register_blueprint(api_bp)
     
     # Initialize services
     from .services.chatbot_service import ChatbotFactory
