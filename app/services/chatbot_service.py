@@ -19,7 +19,7 @@ class Chatbot:
     def __init__(self, config: ChatbotConfig):
         self.config = config
         self.session = self._create_session()
-        
+ 
     def _create_session(self):
         session = requests.Session()
         retry_strategy = Retry(

@@ -1,8 +1,28 @@
+// Message queue for managing chat history
+const messageQueue = [];
+const MAX_MESSAGES = 2;
+
 document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM fully loaded and parsed');
     const chatHistory = document.getElementById('chat-history');
     const inputText = document.getElementById('input-text');
     const audioPlayer = document.getElementById('audio-player');
+
+    // Initialize chatbot and show welcome message
+    async function initializeChat() {
+        try {
+            // Add slight delay to ensure DOM is fully ready
+            await new Promise(resolve => setTimeout(resolve, 300));
+            addMessage('bot', "您好！我是您的AI助手，请问有什么可以帮您？");
+        } catch (error) {
+            console.error('Initialization error:', error);
+        }
+    }
+
+    // Ensure initialization runs after all DOM elements are ready
+    setTimeout(() => {
+        initializeChat();
+    }, 500);
     
     console.log('Elements:', {
         chatHistory,
@@ -77,11 +97,15 @@ document.addEventListener('DOMContentLoaded', function() {
         bubbleDiv.appendChild(timeDiv);
         messageDiv.appendChild(bubbleDiv);
         chatHistory.appendChild(messageDiv);
-        // Smooth scroll to bottom with behavior: 'smooth'
-        chatHistory.scrollTo({
-            top: chatHistory.scrollHeight,
-            behavior: 'smooth'
-        });
+        
+        // 添加新消息到队列
+        messageQueue.push(messageDiv);
+        
+        // 如果超过最大消息数量，移除最老的消息
+        if (messageQueue.length > MAX_MESSAGES) {
+            const oldestMessage = messageQueue.shift();
+            oldestMessage.remove();
+        }
     }
 
     // 播放音频

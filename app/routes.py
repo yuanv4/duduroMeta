@@ -67,17 +67,17 @@ def chat():
         logger.info(f"Chatbot response: {response[:50]}...")
         
         # Generate audio for the response
-        audio_path = current_app.tts.speak(response)
-        logger.debug(f"Generated audio file at: {audio_path}")
-        if not os.path.exists(audio_path):
-            logger.error(f"Audio file not found: {audio_path}")
-            return jsonify({"error": "Failed to generate audio"}), 500
-        audio_url = f"/audio/{os.path.basename(audio_path)}"
-        logger.debug(f"Audio URL: {audio_url}")
+        # audio_path = current_app.tts.speak(response)
+        # logger.debug(f"Generated audio file at: {audio_path}")
+        # if not os.path.exists(audio_path):
+        #     logger.error(f"Audio file not found: {audio_path}")
+        #     return jsonify({"error": "Failed to generate audio"}), 500
+        # audio_url = f"/audio/{os.path.basename(audio_path)}"
+        # logger.debug(f"Audio URL: {audio_url}")
         
         return jsonify({
             "response": response,
-            "audio_url": audio_url
+            "audio_url": ''
         })
     
     except Exception as e:
