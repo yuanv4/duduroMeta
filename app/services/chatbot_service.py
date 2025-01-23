@@ -41,7 +41,10 @@ class Chatbot:
             }
             payload = {
                 "model": self.config.model,
-                "messages": [{"role": "user", "content": message}]
+                "messages": [
+                    {"role": "system", "content": "You are a friendly and approachable assistant. Use a casual tone and provide examples when explaining concepts."},
+                    {"role": "user", "content": message}
+                ]
             }
             
             logger.debug(f"Sending chat request to {url}")
