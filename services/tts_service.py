@@ -28,12 +28,17 @@ class ByteDanceTTS(TTSService):
         self.max_text_length = 300  # Adjust this based on the API's limit
 
     def speak(self, text):
-        """Use ByteDance TTS to convert text to speech and play it."""
+        """Use ByteDance TTS to convert text to speech and play it sequentially."""
         try:
+            import subprocess
+            import time
+            
             # Split the text into chunks that are within the allowed length
             text_chunks = [text[i:i + self.max_text_length] for i in range(0, len(text), self.max_text_length)]
+            audio_index = 0
             
-            for chunk in text_chunks:
+            # Generate all audio chunks first
+            for i, chunk in enumerate(text_chunks):
                 headers = {"Authorization": f"Bearer;{self.access_token}"}
                 
                 request_json = {
@@ -73,11 +78,23 @@ class ByteDanceTTS(TTSService):
                     raise ValueError("No audio data in response")
                     
                 audio_data = base64.b64decode(response_data["data"])
-                with open("temp.mp3", "wb") as f:
+                with open(f"temp_{audio_index}.mp3", "wb") as f:
                     f.write(audio_data)
-                
-                os.system("start temp.mp3" if os.name == "nt" else "afplay temp.mp3")
-                
+                audio_index = audio_index + 1
+            
+            # Play all audio
+            for i in range(audio_index):
+                try:
+                    from playsound import playsound
+                    # 使用绝对路径播放音频
+                    audio_path = os.path.abspath(f"temp_{i}.mp3")
+                    playsound(audio_path)
+                    # Clean up the temporary file
+                    os.remove(audio_path)
+                except ImportError:
+                    print("Please install playsound: pip install playsound")
+                    raise
+                    
         except Exception as e:
             print(f"TTS Error: {str(e)}")
             raise

@@ -26,7 +26,7 @@ class DeepseekChatbot(Chatbot):
             response = self.client.chat.completions.create(
                 model="deepseek-chat",
                 messages=[
-                    {"role": "system", "content": "You are a helpful assistant"},
+                    {"role": "system", "content": "You are a friendly and approachable assistant. Use a casual tone and provide examples when explaining concepts."},
                     {"role": "user", "content": message},
                 ]
             )
