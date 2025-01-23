@@ -68,9 +68,9 @@ document.addEventListener('DOMContentLoaded', function() {
             playBtn.className = 'play-audio-btn';
             playBtn.innerHTML = ''; // Play symbol
             playBtn.title = '';
-            refreshPlayBtn(playBtn, true);
+            bubbleDiv.appendChild(playBtn);
 
-            timeDiv.appendChild(playBtn);
+            refreshPlayBtn(playBtn, true);
         }
         
         bubbleDiv.appendChild(textDiv);
@@ -92,21 +92,43 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // 刷新 playBtn 按钮样式
-    function refreshPlayBtn(currentBtn, isPlaying){
-        if (isPlaying) {
-            currentBtn.innerHTML = '&#10074;'; // Pause symbol
-            currentBtn.title = '暂停播放';
-            currentBtn.addEventListener('click', function() {
-                audioPlayer.pause();
-                refreshPlayBtn(currentBtn, false)
-            });
+    function refreshPlayBtn(currentBtn) {
+        const isPlaying = !audioPlayer.paused;
+        currentBtn.innerHTML = isPlaying ? '&#10074;' : '&#9658;';
+        currentBtn.title = isPlaying ? '暂停播放' : '播放语音';
+        currentBtn.classList.toggle('playing', isPlaying);
+    }
+
+    // 处理播放按钮点击
+    function handlePlayBtnClick() {
+        if (audioPlayer.paused || audioPlayer.ended) {
+            audioPlayer.currentTime = 0;
+            audioPlayer.play();
         } else {
-            currentBtn.innerHTML = '&#9658;'; // Play symbol
-            currentBtn.title = '播放语音';
-            currentBtn.addEventListener('click', function() {
-                audioPlayer.play();
-                refreshPlayBtn(currentBtn, true)
-            });
+            audioPlayer.pause();
         }
     }
+
+    // 初始化音频播放器事件
+    function initAudioPlayer() {
+        // 为audioPlayer添加事件监听
+        ['play', 'pause'].forEach(event => {
+            audioPlayer.addEventListener(event, () => {
+                const playBtn = document.querySelector('.play-audio-btn');
+                if (playBtn) {
+                    refreshPlayBtn(playBtn);
+                }
+            });
+        });
+
+        // 点击事件委托
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('play-audio-btn')) {
+                handlePlayBtnClick();
+            }
+        });
+    }
+
+    // 初始化音频播放器
+    initAudioPlayer();
 });
