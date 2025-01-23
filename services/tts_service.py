@@ -35,65 +35,62 @@ class ByteDanceTTS(TTSService):
             
             # Split the text into chunks that are within the allowed length
             text_chunks = [text[i:i + self.max_text_length] for i in range(0, len(text), self.max_text_length)]
-            audio_index = 0
             
-            # Generate all audio chunks first
-            for i, chunk in enumerate(text_chunks):
-                headers = {"Authorization": f"Bearer;{self.access_token}"}
-                
-                request_json = {
-                    "app": {
-                        "appid": self.appid,
-                        "token": "access_token",
-                        "cluster": self.cluster
-                    },
-                    "user": {
-                        "uid": "388808087185088"
-                    },
-                    "audio": {
-                        "voice_type": self.voice_type,
-                        "language": self.language,
-                        "encoding": "mp3",
-                        "speed_ratio": 1.0,
-                        "volume_ratio": 1.0,
-                        "pitch_ratio": 1.0,
-                    },
-                    "request": {
-                        "reqid": str(uuid.uuid4()),
-                        "text": chunk,
-                        "text_type": "plain",
-                        "operation": "query",
-                        "with_frontend": 1,
-                        "frontend_type": "unitTson"
+            # Create a single MP3 file for all audio data
+            audio_filename = f"temp_{uuid.uuid4().hex}.mp3"
+            with open(audio_filename, "wb") as f:
+                for i, chunk in enumerate(text_chunks):
+                    headers = {"Authorization": f"Bearer;{self.access_token}"}
+                    
+                    request_json = {
+                        "app": {
+                            "appid": self.appid,
+                            "token": "access_token",
+                            "cluster": self.cluster
+                        },
+                        "user": {
+                            "uid": "388808087185088"
+                        },
+                        "audio": {
+                            "voice_type": self.voice_type,
+                            "language": self.language,
+                            "encoding": "mp3",
+                            "speed_ratio": 1.0,
+                            "volume_ratio": 1.0,
+                            "pitch_ratio": 1.0,
+                        },
+                        "request": {
+                            "reqid": str(uuid.uuid4()),
+                            "text": chunk,
+                            "text_type": "plain",
+                            "operation": "query",
+                            "with_frontend": 1,
+                            "frontend_type": "unitTson"
+                        }
                     }
-                }
-                
-                response = requests.post(self.api_url, json=request_json, headers=headers)
-                response_data = response.json()
-                
-                if response.status_code != 200:
-                    raise ValueError(f"TTS API Error: {response_data.get('message', 'Unknown error')}")
                     
-                if "data" not in response_data:
-                    raise ValueError("No audio data in response")
+                    response = requests.post(self.api_url, json=request_json, headers=headers)
+                    response_data = response.json()
                     
-                audio_data = base64.b64decode(response_data["data"])
-                with open(f"temp_{audio_index}.mp3", "wb") as f:
+                    if response.status_code != 200:
+                        raise ValueError(f"TTS API Error: {response_data.get('message', 'Unknown error')}")
+                        
+                    if "data" not in response_data:
+                        raise ValueError("No audio data in response")
+                        
+                    audio_data = base64.b64decode(response_data["data"])
                     f.write(audio_data)
-                audio_index = audio_index + 1
             
-            # Play all audio
-            for i in range(audio_index):
-                try:
-                    from playsound import playsound
-                    # 使用绝对路径播放音频
-                    audio_path = os.path.abspath(f"temp_{i}.mp3")
-                    playsound(audio_path)
-                    # Clean up the temporary file
-                    os.remove(audio_path)
-                except ImportError:
-                    print("Please install playsound: pip install playsound")
-                    raise
+            # Play the combined audio file
+            try:
+                from playsound import playsound
+                audio_path = os.path.abspath(audio_filename)
+                playsound(audio_path)
+                # Clean up the temporary file
+                os.remove(audio_path)
+            except ImportError:
+                print("Please install playsound: pip install playsound")
+                raise
                     
         except Exception as e:
             print(f"TTS Error: {str(e)}")
