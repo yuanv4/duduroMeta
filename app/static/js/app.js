@@ -2,6 +2,14 @@
 const messageQueue = [];
 const MAX_MESSAGES = 2;
 
+// Load markdown renderer
+const marked = window.marked;
+marked.setOptions({
+  breaks: true,
+  gfm: true,
+  sanitize: true
+});
+
 document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM fully loaded and parsed');
     const chatHistory = document.getElementById('chat-history');
@@ -13,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             // Add slight delay to ensure DOM is fully ready
             await new Promise(resolve => setTimeout(resolve, 300));
-            addMessage('bot', "您好！我是兜兜龙！");
+            addMessage('bot', "你好呀！我是兜兜龙，一个专门帮助小朋友学习的AI小伙伴哦！");
         } catch (error) {
             console.error('Initialization error:', error);
         }
@@ -76,7 +84,11 @@ document.addEventListener('DOMContentLoaded', function() {
         
         const textDiv = document.createElement('div');
         textDiv.className = 'message-text';
-        textDiv.textContent = text;
+        if (sender === 'bot') {
+            textDiv.innerHTML = marked.parse(text);
+        } else {
+            textDiv.textContent = text;
+        }
         
         const timeDiv = document.createElement('div');
         timeDiv.className = 'message-time';

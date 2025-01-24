@@ -94,6 +94,67 @@ body {
     margin-bottom: 16px;
 }
 
+/* Markdown styles */
+.message-text p {
+    margin: 0.5em 0;
+    line-height: 1.6;
+}
+
+.message-text ul,
+.message-text ol {
+    padding-left: 1.5em;
+    margin: 0.5em 0;
+}
+
+.message-text li {
+    margin: 0.25em 0;
+}
+
+.message-text code {
+    background: rgba(0,0,0,0.05);
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+    font-family: monospace;
+    font-size: 0.9em;
+}
+
+.message-text pre {
+    background: rgba(0,0,0,0.05);
+    padding: 0.8em;
+    border-radius: 4px;
+    overflow-x: auto;
+    margin: 0.8em 0;
+}
+
+.message-text pre code {
+    background: none;
+    padding: 0;
+}
+
+.message-text blockquote {
+    border-left: 3px solid rgba(0,0,0,0.1);
+    padding-left: 0.8em;
+    margin: 0.8em 0;
+    color: rgba(0,0,0,0.7);
+}
+
+.message-text a {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.message-text a:hover {
+    text-decoration: underline;
+}
+
+.message-text strong {
+    font-weight: 600;
+}
+
+.message-text em {
+    font-style: italic;
+}
+
 .message-time {
     position: absolute;
     right: 12px;
