@@ -1,6 +1,6 @@
 // Message queue for managing chat history
 const messageQueue = [];
-const MAX_MESSAGES = 2;
+const MAX_MESSAGES = 3;
 
 // Load markdown renderer
 const marked = window.marked;
