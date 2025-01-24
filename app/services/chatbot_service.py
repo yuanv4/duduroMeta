@@ -74,6 +74,8 @@ class Chatbot:
         
     def _init_knowledge_base(self):
         logger.trace("Starting knowledge base initialization")
+        logger.debug(f"Knowledge base path: {self.config.knowledge_base_path}")
+        logger.debug(f"Local model path: {self.config.local_model_path}")
         import os
         import pickle
         from datetime import datetime, timedelta
@@ -95,9 +97,16 @@ class Chatbot:
                 
                 # 如果知识库文件未修改且缓存未过期（7天）
                 if (datetime.now() - last_modified) < timedelta(days=7):
-                    with open(cache_file, "rb") as f:
-                        logger.info("Loading vector store from cache")
-                        return pickle.load(f)
+                    # 检查缓存版本是否匹配当前文件格式
+                    if metadata.get("file_format", "txt") == "md":
+                        with open(cache_file, "rb") as f:
+                            logger.info("Loading vector store from cache")
+                            return pickle.load(f)
+                    
+            # 如果文件格式不匹配，清除缓存
+            logger.info("Clearing outdated cache due to file format change")
+            os.remove(cache_file)
+            os.remove(metadata_file)
         
         # 加载知识库文档
         logger.debug("Loading knowledge base documents...")
@@ -105,7 +114,7 @@ class Chatbot:
             from langchain_community.document_loaders import TextLoader
             loader = DirectoryLoader(
                 self.config.knowledge_base_path,
-                glob="**/*.txt",
+                glob="**/*.md",
                 loader_cls=TextLoader,
                 show_progress=True
             )
@@ -157,7 +166,8 @@ class Chatbot:
             import json
             json.dump({
                 "last_modified": datetime.now().isoformat(),
-                "version": "1.0"
+                "version": "1.0",
+                "file_format": "md"
             }, f)
         
         logger.info("Knowledge base initialized and cached successfully")
@@ -179,8 +189,11 @@ class Chatbot:
         
     def chat(self, message: str) -> str:
         try:
+            logger.debug(f"Received chat message: {message}")
             # 先进行知识检索
+            logger.trace("Performing similarity search on vector store")
             docs_and_scores = self.vector_store.similarity_search_with_score(message, k=3)
+            logger.debug(f"Found {len(docs_and_scores)} relevant documents")
             
             # 构建上下文
             context_parts = []

@@ -49,7 +49,8 @@ def chat():
         description: Invalid request
     """
     try:
-        logger.info(f"Incoming {request.method} request to /chat")
+        logger.info(f"Incoming {request.method} request to /chat from {request.remote_addr}")
+        logger.debug(f"Request headers: {dict(request.headers)}")
         if request.method == 'POST':
             data = request.get_json()
             logger.debug(f"POST request data: {data}")
@@ -111,17 +112,24 @@ def speak():
         description: Invalid request
     """
     try:
+        logger.info(f"Incoming {request.method} request to /speak from {request.remote_addr}")
+        logger.debug(f"Request headers: {dict(request.headers)}")
+        
         if request.method == 'POST':
             data = request.get_json()
+            logger.debug(f"POST request data: {data}")
             request_data = SpeakRequest(**data)
+            logger.info(f"Processing TTS request with text: {request_data.text[:50]}... (length: {len(request_data.text)})")
         else:  # GET
             text = request.args.get('text')
             if not text:
+                logger.error("GET request missing 'text' parameter")
                 return jsonify({"error": "text parameter is required"}), 400
             # Ensure text is properly encoded
             try:
                 text = text.encode('utf-8').decode('utf-8')
             except UnicodeError:
+                logger.error("Invalid text encoding")
                 return jsonify({"error": "invalid text encoding"}), 400
             # Validate text length and content
             logger.debug(f"Validating text length: {len(text)} characters")

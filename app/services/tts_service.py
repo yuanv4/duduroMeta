@@ -20,8 +20,12 @@ class TTSConfig(BaseModel):
 
 class TTSService:
     def __init__(self, config: TTSConfig):
+        logger.info("Initializing TTS service...")
         self.config = config
+        logger.debug(f"TTS config: {self.config}")
+        logger.debug(f"Creating audio folder at: {self.config.audio_folder}")
         os.makedirs(self.config.audio_folder, exist_ok=True)
+        logger.info("TTS service initialized successfully")
         
     def speak(self, text: str) -> str:
         try:

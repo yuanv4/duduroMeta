@@ -16,9 +16,12 @@ def create_app():
     app.config["DEBUG"] = config.flask_debug
     app.config["AUDIO_FOLDER"] = os.path.abspath(config.audio_folder)
 
-    # Configure logging
+    # Configure logging with timestamped log files
+    from datetime import datetime
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    
     logger.add(
-        "logs/app.log",
+        f"logs/app_{timestamp}.log",
         rotation="100 MB",
         retention="7 days",
         level="DEBUG" if config.flask_debug else "INFO"
