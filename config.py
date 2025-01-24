@@ -112,16 +112,6 @@ class Settings(BaseSettings):
             raise ValueError("Secret values must be at least 32 characters")
         return value
 
-# Configure logger
-logger.remove()
-logger.add(
-    "logs/app.log",
-    rotation="100 MB",
-    retention="30 days",
-    level="INFO",
-    format="{time:YYYY-MM-DD HH:mm:ss} | {level} | {message}"
-)
-
 # Initialize config
 try:
     config = Settings()

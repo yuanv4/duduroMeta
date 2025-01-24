@@ -7,9 +7,6 @@ from loguru import logger
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'app', 'services'))
 from chatbot_service import ChatbotFactory
 
-# 配置日志
-logger.add("logs/test_rag.log", rotation="10 MB", level="TRACE")
-
 @pytest.fixture
 def chatbot():
     """Chatbot测试夹具"""
@@ -38,12 +35,18 @@ def test_knowledge_base_loading():
     assert len(files) > 0, f"知识库路径为空: {base_path}"
 
 @pytest.mark.parametrize("question,expected_keywords", [
-    ("长颈鹿有多高？", ["长颈鹿", "高", "米"]),
-    ("圆的周长公式是什么？", ["圆", "周长", "公式"]),
-    ("蜜蜂如何传递信息？", ["蜜蜂", "跳舞", "花蜜"]),
-    ("分数加减法要注意什么？", ["分数", "加减法", "通分"]),
-    ("企鹅会飞吗？", ["企鹅", "飞"]),
-    ("三角形内角和是多少？", ["三角形", "内角和", "180度"])
+    ("大多数人写字时用哪一只手？", ["大多数", "写字", "手"]),
+    ("家里的顶灯是在我们的什么位置？", ["顶灯", "位置", "上面"]),
+    ("数学书放在桌上,数学书的下面是(  )", ["数学书", "桌子", "下面"]),
+    ("小强住在9楼，小李住在6楼，小强在小李的什么位置？", ["小强", "小李", "上面"]),
+    ("跳水运动的跳板在水面的什么位置？", ["跳板", "水面", "上面"]),
+    ("玩滑板时，向后蹬地，人会向哪里运动", ["滑板", "向后", "前面"]),
+    ("射击时，子弹朝枪口的哪个方向飞行？", ["子弹", "枪口", "前面"]),
+    ("划船时，向后划桨，船会向哪个方向行驶？", ["划船", "划桨", "前面"]),
+    ("篮球运动中的'后仰投篮'，投篮者身体向哪个方向倾斜？", ["篮球", "后仰", "后面"]),
+    ("拔河运动中，运动员要把绳子向哪个方向拉？", ["拔河", "绳子", "后面"]),
+    ("看书时，从哪个方向读文字？", ["看书", "文字", "从左向右"]),
+    ("测右眼视力时，需要遮挡住哪只眼睛？", ["右眼", "视力", "左眼"])
 ])
 def test_chatbot_response_contains_expected_keywords(chatbot, question, expected_keywords):
     """测试Chatbot响应是否包含预期关键词"""
@@ -62,4 +65,10 @@ def test_chatbot_response_contains_expected_keywords(chatbot, question, expected
         pytest.fail(f"问答测试失败: {str(e)}")
 
 if __name__ == "__main__":
+    logger.add(
+        f"{os.path.dirname(__file__)}/logs/{os.path.basename(__file__)}.log",
+        rotation="100 MB",
+        retention="7 days",
+        level="DEBUG"
+    )
     pytest.main(["-v", "--log-level=INFO"])

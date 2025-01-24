@@ -10,23 +10,19 @@ def create_app():
         template_folder='templates',
         static_url_path='/static'
     )
+
+    logger.add(
+        f"{os.path.dirname(__file__)}/logs/app.log",
+        rotation="100 MB",
+        retention="7 days",
+        level="DEBUG" if config.flask_debug else "INFO"
+    )
     
     # Configure application
     app.config["SECRET_KEY"] = str(config.flask_secret_key)
     app.config["DEBUG"] = config.flask_debug
     app.config["AUDIO_FOLDER"] = os.path.abspath(config.audio_folder)
 
-    # Configure logging with timestamped log files
-    from datetime import datetime
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    
-    logger.add(
-        f"logs/app_{timestamp}.log",
-        rotation="100 MB",
-        retention="7 days",
-        level="DEBUG" if config.flask_debug else "INFO"
-    )
-    
     # Register blueprints
     from .routes import bp as api_bp
     app.register_blueprint(api_bp)

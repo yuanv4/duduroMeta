@@ -8,9 +8,6 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'app', 'services'))
 from tts_service import TTSService, TTSConfig
 
-# 配置日志
-logger.add("logs/test_tts.log", rotation="10 MB", level="TRACE")
-
 @pytest.fixture
 def tts_service():
     """TTS服务测试夹具"""
@@ -49,4 +46,10 @@ def test_text_to_speech_conversion(tts_service, text, expected_format):
         pytest.fail(f"语音合成测试失败: {str(e)}")
 
 if __name__ == "__main__":
+    logger.add(
+        f"{os.path.dirname(__file__)}/logs/{os.path.basename(__file__)}.log",
+        rotation="100 MB",
+        retention="7 days",
+        level="DEBUG"
+    )
     pytest.main(["-v", "--log-level=INFO"])
