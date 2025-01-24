@@ -7,13 +7,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-# Audio cache
-*.mp3
-*.wav
-
-# IDE specific files
-.vscode/
-.idea/
+# Audio files
+app/static/audio/*
+!app/static/audio/.gitkeep
 
 # Log files
 *.log
@@ -27,5 +23,35 @@ ENV/
 env.bak/
 venv.bak/
 
+# IDE specific files
+.vscode/
+.idea/
+
+# Model files (handled by submodules)
+models/*
+!models/text2vec-base-chinese/
+
+# Test artifacts
+test-audio/
+
 # Loguru logs
 logs/app.log
+
+# Knowledge base cache
+data/knowledge_base/.cache/
+
+# Python packaging/build artifacts
+build/
+dist/
+*.egg-info/
+*.egg
+.pytest_cache/
+.coverage
+htmlcov/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Tests cache
+tests/.cache/

@@ -1,0 +1,3 @@
+[submodule "models/text2vec-base-chinese"]
+	path = models/text2vec-base-chinese
+	url = https://huggingface.co/shibing624/text2vec-base-chinese

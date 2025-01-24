@@ -64,19 +64,37 @@ class TTSService:
                         }
                     }
                     
-                    logger.debug(f"Sending TTS request for: {chunk}")
+                    logger.debug(f"Sending TTS request for chunk {i+1}/{len(text_chunks)}")
+                    logger.trace(f"Request payload: {request_json}")
+                    
                     response = requests.post(
                         self.config.api_url,
                         json=request_json,
                         headers=headers
                     )
                     response_data = response.json()
+                    
+                    logger.debug(f"Received response with status: {response.status_code}")
+                    logger.trace(f"Response headers: {response.headers}")
+                    
                     if response.status_code != 200:
-                        raise ValueError(f"TTS API Error: {response_data.get('message', 'Unknown error')}")
+                        error_msg = f"TTS API Error: {response_data.get('message', 'Unknown error')}"
+                        logger.error(error_msg)
+                        raise ValueError(error_msg)
+                        
                     if "data" not in response_data:
-                        raise ValueError("No audio data in response")
+                        error_msg = "No audio data in response"
+                        logger.error(error_msg)
+                        raise ValueError(error_msg)
+                        
                     audio_data = base64.b64decode(response_data["data"])
-                    f.write(audio_data)
+                    if not audio_data:
+                        error_msg = "Empty audio data received"
+                        logger.error(error_msg)
+                        raise ValueError(error_msg)
+                        
+                    bytes_written = f.write(audio_data)
+                    logger.debug(f"Wrote {bytes_written} bytes to {audio_path}")
 
             return audio_path
             

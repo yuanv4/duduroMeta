@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             // Add slight delay to ensure DOM is fully ready
             await new Promise(resolve => setTimeout(resolve, 300));
-            addMessage('bot', "您好！我是您的AI助手，请问有什么可以帮您？");
+            addMessage('bot', "您好！我是兜兜龙！");
         } catch (error) {
             console.error('Initialization error:', error);
         }
