@@ -6,9 +6,6 @@ app = create_app()
 
 if __name__ == "__main__":
     try:
-        # Create logs directory if it doesn't exist
-        os.makedirs("logs", exist_ok=True)
-        
         logger.info("Starting Flask application")
         app.run(
             host=app.config.get("HOST", "0.0.0.0"),
